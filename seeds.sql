@@ -13,9 +13,9 @@ VALUES ("Head of Productions", 105000.00, 1),
 
 INSERT INTO employees (first_name, last_name, role_id, manager_id)
 VALUES ("John", "Neilsen", 5, NULL),
-        ("Steven", "Kerr", 4, 3),
-        ("Emily", "Shaw", 3, NULL),
         ("Kevin", "Naylor", 1, NULL),
-        ("Eric", "Roth", 6, 5),
-        ("Jenna", "Hanson", 2, 1)
+        ("Emily", "Shaw", 3, NULL),
+        ("Jenna", "Hanson", 2, 1),
+        ("Steven", "Kerr", 4, 3),
+        ("Eric", "Roth", 6, 2);
         

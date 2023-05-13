@@ -43,59 +43,59 @@ const mainMenu = () => {
     .then((answer) => {
       console.log(answer);
 
-      if (answer === "View all departments") {
+      if (answer.action === "View all departments") {
         viewDepart();
       }
 
-      if (answer === "View all roles") {
+      if (answer.action === "View all roles") {
         viewRole();
       }
 
-      if (answer === "View all employees") {
+      if (answer.action === "View all employees") {
         viewEmp();
       }
 
-      if (answer === "Add a department") {
+      if (answer.action === "Add a department") {
         addDepart();
       }
 
-      if (answer === "Add a role") {
+      if (answer.action === "Add a role") {
         addRole();
       }
 
-      if (answer === "Add an employee") {
+      if (answer.action === "Add an employee") {
         addEmp();
       }
 
-      if (answer === "Update an employee role") {
+      if (answer.action === "Update an employee role") {
         updateEmpRole();
       }
 
-      if (answer === "Update employee manager") {
+      if (answer.action === "Update employee manager") {
         updateEmpMan();
       }
 
-      if (answer === "View employee by manager") {
+      if (answer.action === "View employee by manager") {
         viewEmpMan();
       }
 
-      if (answer === "Delete a department") {
+      if (answer.action === "Delete a department") {
         deleteDepart();
       }
 
-      if (answer === "Delete a role") {
+      if (answer.action === "Delete a role") {
         deleteRole();
       }
 
-      if (answer === "Delete an employee") {
+      if (answer.action === "Delete an employee") {
         deleteEmp();
       }
 
-      if (answer === "View budget salary with in a department") {
+      if (answer.action === "View budget salary with in a department") {
         departSalary();
       }
 
-      if (answer === "quit") {
+      if (answer.action === "quit") {
         quit();
       }
     });
@@ -103,7 +103,7 @@ const mainMenu = () => {
 
 // present table showing department names and department ids
 const viewDepart = () => {
-  db.query(`SELECT * FROM department`, (err, result) => {
+  db.query(`SELECT * FROM departments;`, (err, result) => {
     if (err) {
       console.log(err);
     }
@@ -114,18 +114,20 @@ const viewDepart = () => {
 
 // present job title, role id, department that that role belongs to, salary for that role
 const viewRole = () => {
-  db.query(`SELECT * FROM role`, (result, err) => {
+  db.query(`SELECT * FROM roles;`, (err, result) => {
     if (err) {
       console.log(err);
     }
-    console.table("Roles", result.id, result.name);
+    console.table(result);
     mainMenu();
   });
 };
 
+// result.id, result.name
+
 // present emplyee data; employee id, first name, last name, job titles, departments, salaries, managers that that employee reports to
 const viewEmp = () => {
-  db.query(`SELECT * FROM employee`, (result, err) => {
+  db.query(`SELECT * FROM employees;`, (err, result) => {
     if (err) {
       console.log(err);
     }
@@ -147,7 +149,7 @@ const addDepart = () => {
     .then((answer) => {
       console.log(answer);
       
-      db.query(`INSERT INTO departments (name) VALUES ?`, answer.name, (err, result) => {
+      db.query(`INSERT INTO departments (name) VALUES= ?`, [answer.name], (err, result) => {
         if (err) {
             console.log(err);
         };
@@ -180,7 +182,7 @@ const addRole = () => {
   .then((answer) => {
     console.log(answer)
 
-    db.query(`INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)`, answer.title, answer.salary, answer.department_id, (err, results) => {
+    db.query(`INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)`, [answer.title, answer.salary, answer.department_id], (err, results) => {
         if (err) {
             console.log(err)
         };
@@ -232,59 +234,101 @@ const addEmp = () => {
 
 // update employee role
 const updateEmpRole = () => {
-  return inquirer.prompt([
-    {
-      type: "list",
-      name: "employee",
-      message: "What employee would you like to update?",
-      choices: "", //add current employees from database//
-    },
-    {
-      type: "input",
-      name: "newRole",
-      message: "What is their new role?",
-    },
-  ])
-  .then((answer) => {
-    console.log(answer);
 
-    db.query(`UPDATE employees SET role_id=? WHERE first_name=?`, answer.newRole, answer.employee, (err, result) => {
-        if (err) {
-            console.log(err)
-        };
-        console.table(result)
-        mainMenu()
+    // say we have a temp Employee Container
+    // employeeList = [];
+    // we need to query our DB for all of our Employees
+
+    db.query("SELECT * FROM employees;", (err, data) => {
+        if(err) {
+            console.log(err);
+        }
+
+       // console.log("TYpe: ", typeof data);
+       // console.log(data);
+        console.table(data);
+
+        // let names = [];
+        let currentEmployees = data.map((employee) => {
+            return { name: employee.first_name + ' ' + employee.last_name, value: employee.id }
+        });
+        // console.log("Current EMployees: ", currentEmployees);
+        // // Loop through dataset, pull out IMPORTANT INFO
+        // for(let i = 0; i < data.length; i++) {
+        //    // names.push(data[i].first_name + " " + data[i].last_name) 
+        //     names.push(data[i].first_name) 
+        // }
+
+        inquirer.prompt([
+          {
+            type: "list",
+            name: "employee",
+            message: "What employee would you like to update?",
+            choices: currentEmployees, //add current employees from database//
+          },
+          {
+            type: "input",
+            name: "newRole",
+            message: "What is their new role?",
+          },
+        ])
+        .then((answer) => {
+          console.log(answer);
+      
+          db.query(`UPDATE employees SET role_id=? WHERE id=?;`, [answer.newRole, answer.employee], (err, result) => {
+              if (err) {
+                  console.log(err)
+              };
+              viewEmp()
+             mainMenu()
+          })
+        })
+
     })
-  })
+
+    
+  
 };
 
 // update employee manager
 const updateEmpMan = () => {
-  return inquirer.prompt([
+
+    db.query("SELECT * FROM employees;", (err, data) => {
+        if(err) {
+            console.log(err);
+        }
+
+        console.table(data);
+
+    let currentEmployees = data.map((employee) => {
+        return { name: employee.first_name + ' ' + employee.last_name, value: employee.id }
+    });
+
+    inquirer.prompt([
     {
       type: "list",
       name: "currentEmployee",
       message: "What employee would you like to update, their manager",
-      choices: "", //all employees from database
+      choices: currentEmployees, //all employees from database
     },
     {
       type: "input",
       name: "newManager",
-      message: "Who is their new employee",
+      message: "Who is their new manager",
     },
   ])
   .then((answer) => {
     console.log(answer)
 
-    db.query(`UPDATE employees SET manager_id=? WHERE first_name=?`, answer.newManager, answer.currentEmployee, (err, result) => {
+    db.query(`UPDATE employees SET manager_id=? WHERE role_id=?`, [answer.newManager, answer.currentEmployee], (err, result) => {
         if (err) {
             console.log(err)
         };
-        console.table(result)
+        viewEmp()
         mainMenu()
     })
   })
-};
+})};
 
 // view employees by manager 
 const viewEmpMan = () => {
