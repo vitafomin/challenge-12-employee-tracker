@@ -216,7 +216,7 @@ const addEmp = () => {
       {
         type: "input",
         name: "role",
-        message: "What is the employees role?",
+        message: "What is the employees role? (please provide role id)",
       },
       {
         type: "input",
@@ -478,7 +478,8 @@ const departSalary = () => {
         {
           type: "input",
           name: "departSum",
-          message: "What department budget would you like to see?",
+          message:
+            "What department budget would you like to see? (please provide department id)",
         },
       ])
       .then((answer) => {
