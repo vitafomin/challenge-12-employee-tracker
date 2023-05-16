@@ -14,6 +14,7 @@ To allow this application to work you will need to have inquirer, mysql, and the
 
 This is a great application for any business owner that wants to stay orgnized. This is an efficient tool to manage all the departments, roles, and employees within any company. It is a very useful tool to stay orgainized and stay on top of all the changes that happen within a company.
  https://github.com/vitafomin/challenge-12-employee-tracker
+ https://drive.google.com/file/d/19vHO4CdGS7zRz1p445MueCxUjzqVNVpt/view
 
 ## Credits
 
